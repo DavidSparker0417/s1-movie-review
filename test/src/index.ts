@@ -10,9 +10,9 @@ async function main() {
 
   // serialize data
   const review = {
-    title: "Interrupt politely",
+    title: "May I interrupt?",
     rating: 3,
-    description: "May I come in here? In fact, new laptops tend to be lighter, not heavier."
+    description: "May I interrupt? I do have something relevant to disclose."
   }
   const instructionSchema = borsh.struct([
     borsh.u8('command'),
