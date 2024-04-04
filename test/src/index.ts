@@ -10,9 +10,9 @@ async function main() {
 
   // serialize data
   const review = {
-    title: "May I interrupt?",
-    rating: 3,
-    description: "May I interrupt? I do have something relevant to disclose."
+    title: "Interrupt politely",
+    rating: 4,
+    description: "Can I make a comment? May I come in here? May I interrupt?"
   }
   const instructionSchema = borsh.struct([
     borsh.u8('command'),
@@ -22,7 +22,7 @@ async function main() {
   ])
   const buffer = Buffer.alloc(1000)
   instructionSchema.encode({
-    ...review, command: 0
+    ...review, command: 1
   }, buffer)
   const serializedBuffer = buffer.slice(0, instructionSchema.getSpan(buffer))
 
