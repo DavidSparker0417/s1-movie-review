@@ -15,6 +15,9 @@ pub enum MovieReviewInstruction {
         rating: u8,
         description: String,
     },
+    AddComment {
+        comment: String,
+    },
 }
 
 #[derive(BorshDeserialize)]
@@ -24,33 +27,39 @@ struct MovieReviewPayload {
     description: String,
 }
 
+#[derive(BorshDeserialize)]
+struct CommentPayload {
+    comment: String,
+}
+
 impl MovieReviewInstruction {
     pub fn unpack(input: &[u8]) -> Result<Self, ProgramError> {
         let (&cmd, rest) = input
             .split_first()
             .ok_or(ProgramError::InvalidInstructionData)?;
         msg!("command = {}", cmd);
-        let payload = MovieReviewPayload::try_from_slice(rest).unwrap();
         Ok(match cmd {
-            0 => Self::AddReview {
-                title: payload.title,
-                rating: payload.rating,
-                description: payload.description,
-            },
-            1 => Self::UpdateReview {
-                title: payload.title,
-                rating: payload.rating,
-                description: payload.description,
-            },
+            0 => {
+                let payload = MovieReviewPayload::try_from_slice(rest).unwrap();
+                Self::AddReview {
+                    title: payload.title,
+                    rating: payload.rating,
+                    description: payload.description,
+                }
+            }
+            1 => {
+                let payload = MovieReviewPayload::try_from_slice(rest).unwrap();
+                Self::UpdateReview {
+                    title: payload.title,
+                    rating: payload.rating,
+                    description: payload.description,
+                }
+            }
+            2 => {
+                let payload = CommentPayload::try_from_slice(rest).unwrap();
+                Self::AddComment { comment: payload.comment }
+            }
             _ => return Err(ProgramError::InvalidInstructionData),
         })
     }
-}
-
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    data: &[u8],
-) -> ProgramResult {
-    Ok(())
 }
